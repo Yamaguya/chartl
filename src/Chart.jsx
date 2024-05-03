@@ -10,8 +10,6 @@ function Chart(props)
         alt : 'cover'
     }
 
-    const mounted = useRef(false);
-
     const [row, setRow] = useState([card]);
     const [listOfRows, addRow] = useState([row]);
 
@@ -24,7 +22,7 @@ function Chart(props)
                 setRow(r => [...r, card]);
             }
         }
-    }, [props.colsNum]); // Only add new column of cards if colsNum is changed
+    }, [props.colsNum, row]); // Only add new column of cards if colsNum is changed
 
     // UPDATE ROWS
     useEffect(() => {
@@ -35,11 +33,11 @@ function Chart(props)
                 addRow(rs => [...rs, row]);
             }
         }
-    }, [props.rowsNum]); // Only add new row if rowsNum is changed
+    }, [props.rowsNum, row]); // Only add new row if rowsNum is changed
 
     const updatedRow = row.map((r, index)=>{
         return(
-            <img key={index} src={row[index].src} alt={row[index].alt}
+            <img className='card' key={index} src={row[index].src} alt={row[index].alt}
                 
             />
         );

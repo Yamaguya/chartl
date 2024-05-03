@@ -11,30 +11,39 @@ body
   max-width: 10%;
 }
 
+#searchResults
+{
+  display: flexbox;
+  max-height: 300px;
+}
+
+.searchCard img
+{
+  max-width: 150px;
+}
+
 #chartWrapper 
 {
   display: inline-block;
-  margin-left: 12%;
-  width: 85%;
+  margin-left: 20%;
+  width: 75%;
   background-color:royalblue;
 }
 
-#chart 
+#chartDetails
 {
-  width: 60%;
+  width: 10%;
 }
-
 
 .chartRow 
 {
   opacity: 0.9;
   background-color: #20262e;
+  display: inline-block;
 }
 
-.card 
-{
-  opacity: 1;
-  display: inline-block;
-  height: 250px;
-  width: 250px;
+.card {
+  padding: 10px;
+  height: 200px;
+  width: 200px;
 }
