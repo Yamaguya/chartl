@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import cover from './assets/either-or.jpg'
+import cover from './assets/default.png'
 
 function Chart(props) 
 {
