@@ -3,3 +3,38 @@ body
   padding: 20px;
   font-family: Helvetica;
 }
+
+#fixed
+{
+  width: 10%;
+  position: fixed;
+  max-width: 10%;
+}
+
+#chartWrapper 
+{
+  display: inline-block;
+  margin-left: 12%;
+  width: 85%;
+  background-color:royalblue;
+}
+
+#chart 
+{
+  width: 60%;
+}
+
+
+.chartRow 
+{
+  opacity: 0.9;
+  background-color: #20262e;
+}
+
+.card 
+{
+  opacity: 1;
+  display: inline-block;
+  height: 250px;
+  width: 250px;
+}

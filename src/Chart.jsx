@@ -1,4 +1,4 @@
-import { createElement, useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import cover from './assets/either-or.jpg'
 
 function Chart(props) 
@@ -10,22 +10,30 @@ function Chart(props)
         alt : 'cover'
     }
 
+    const mounted = useRef(false);
+
     const [row, setRow] = useState([card]);
     const [listOfRows, addRow] = useState([row]);
 
+    // UPDATE COLUMNS
     useEffect(() => {
         if (props.colsNum < Object.keys(row).length) {
             setRow(row.filter((_, i) => i < props.colsNum));
         } else {
-            setRow(r => [...r, card]);
+            for (let i = Object.keys(row).length; i < props.colsNum; i++) {
+                setRow(r => [...r, card]);
+            }
         }
     }, [props.colsNum]); // Only add new column of cards if colsNum is changed
 
+    // UPDATE ROWS
     useEffect(() => {
         if (props.rowsNum < Object.keys(listOfRows).length) {
             addRow(listOfRows.filter((_, ri) => ri < props.rowsNum));
         } else {
-            addRow(rs => [...rs, row]);
+            for (let i = listOfRows.length; i < props.rowsNum; i++) {
+                addRow(rs => [...rs, row]);
+            }
         }
     }, [props.rowsNum]); // Only add new row if rowsNum is changed
 
