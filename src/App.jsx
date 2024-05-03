@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import Chart from './Chart.jsx';
+import defaultImg from './assets/default.png'
 
 function App() {
 	const [rowCount, setRowCount] = useState(3);
     const [colCount, setColCount] = useState(3);
 	const [search, submitSearch] = useState("");
 	const [searchResults, updateResults] = useState(['']);
+
+	const defImg = defaultImg;
+
+	const [imgSrc, addImgSrc] = useState(defImg);
 
 	function updateRowCount(event) {
         setRowCount(event.target.value);
@@ -20,26 +25,27 @@ function App() {
 		submitSearch(event.target.value);
 		fetchLastFmData();
 	}
+
+	function handleClickImage(event) {
+		addImgSrc(event.target['src']);
+
+		//console.log(imgSrc);
+	}
 	
 	async function fetchLastFmData() {
-		updateResults([]);
+		updateResults([]); // Clear previous search results
 		const res = await fetch('https://ws.audioscrobbler.com/2.0/?method=album.search&album='+search+'&api_key=c1cdfe36b37e79fa24ca83d862a9dcaf&format=json');
 		const data = await res.json();
-		//console.log(data);
 		const albumList = data.results.albummatches.album;
-		//albumList.forEach((a) => console.log(a.image[3]["#text"]));
-		//console.log(albumList);
 		albumList.forEach((a) =>
 			updateResults(alb => [...alb,(a.image[3]['#text'])])
 		);
-		//updateResults(albs => [...albs, albumList.image[3]["#text"]]);
-		//console.log([albumList.forEach((a) => a.image[3]["#text"])]);
 	}
 
 	const listOfResults = searchResults.map((result, index) => {	
         return(
 			<div className='searchCard'>
-            	<img src={result} key={index} />
+            	<img src={result} key={index} onClick={handleClickImage}/>
 			</div>
         );
     });
@@ -87,7 +93,7 @@ function App() {
 				</div>
 			</div>
 		</div>
-		<Chart rowsNum={rowCount} colsNum={colCount}/>
+		<Chart rowsNum={rowCount} colsNum={colCount} image={imgSrc}/>
 	</>
 	)
 }
