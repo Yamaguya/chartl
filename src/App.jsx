@@ -22,6 +22,7 @@ function App() {
 	}
 	
 	async function fetchLastFmData() {
+		updateResults([]);
 		const res = await fetch('https://ws.audioscrobbler.com/2.0/?method=album.search&album='+search+'&api_key=c1cdfe36b37e79fa24ca83d862a9dcaf&format=json');
 		const data = await res.json();
 		//console.log(data);
