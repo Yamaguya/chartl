@@ -7,11 +7,22 @@ function App() {
 	const [rowCount, setRowCount] = useState(3);
     const [colCount, setColCount] = useState(3);
 	const [search, submitSearch] = useState("");
-	const [searchResults, updateResults] = useState(['']);
+	
+	const [newDet, setNewDet] = useState({
+										artist : '',
+										album: '', 
+										coverArt : ''});
+	const [searchContents, updateContents] = useState([newDet]);
+	
+	const [coverList, setCoverList] = useState(['']);
+	const [artistList, setArtistList] = useState(['']);
+	const [albumList, setAlbumList] = useState(['']);
 
 	const defImg = defaultImg;
 
-	const [imgSrc, addImgSrc] = useState(defImg);
+	const [imgSrc, setImgSrc] = useState(defImg);
+	const [artistName, setArtist] = useState('');
+	const [albumName, setAlbum] = useState('');
 
 	function updateRowCount(event) {
         setRowCount(event.target.value);
@@ -26,26 +37,40 @@ function App() {
 		fetchLastFmData();
 	}
 
-	function handleClickImage(event) {
-		addImgSrc(event.target['src']);
-
-		//console.log(imgSrc);
+	// Can safely use index as key because the search results are never reordered or filtered  
+	function handleClickImage(event) { 
+		const i = (event.target['alt']);
+		//console.log(albumList[i] + ' ' + artistList[i] + ' ' + coverList[i]);
+		setAlbum(albumList[i]);
+		setArtist(artistList[i]);
+		setImgSrc(coverList[i]);
+		//addAlbum(event.target.)
 	}
 	
 	async function fetchLastFmData() {
-		updateResults([]); // Clear previous search results
+		setCoverList([]); // Clear previous search results
+		setArtistList([]);
+		setAlbumList([]);
+
 		const res = await fetch('https://ws.audioscrobbler.com/2.0/?method=album.search&album='+search+'&api_key=c1cdfe36b37e79fa24ca83d862a9dcaf&format=json');
 		const data = await res.json();
+
 		const albumList = data.results.albummatches.album;
 		albumList.forEach((a) =>
-			updateResults(alb => [...alb,(a.image[3]['#text'])])
+			setCoverList(alb => [...alb,(a.image[3]['#text'])])
+		);
+		albumList.forEach((a) =>
+			setArtistList(alb => [...alb,(a.artist)])
+		);
+		albumList.forEach((a) =>
+			setAlbumList(alb => [...alb,(a.name)])
 		);
 	}
 
-	const listOfResults = searchResults.map((result, index) => {	
+	const listOfResults = coverList.map((result, index) => {	
         return(
 			<div className='searchCard'>
-            	<img src={result} key={index} onClick={handleClickImage}/>
+            	<img src={result} key={index} onClick={handleClickImage} alt={index}/>
 			</div>
         );
     });
@@ -93,7 +118,7 @@ function App() {
 				</div>
 			</div>
 		</div>
-		<Chart rowsNum={rowCount} colsNum={colCount} image={imgSrc}/>
+		<Chart rowsNum={rowCount} colsNum={colCount} image={imgSrc} artist={artistName} album={albumName}/>
 	</>
 	)
 }

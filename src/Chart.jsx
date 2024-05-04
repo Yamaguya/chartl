@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
 import defaultImg from './assets/default.png'
-import { useSpring, useTransition, animated } from "react-spring";
 
 function Chart(props) 
 {
+    const defaultAlt = 'coverArt'
     const [card, setCard] = useState({
         type : 'img',
         src : defaultImg,
-        alt : 'cover'
+        alt : defaultAlt
     });
-    const [isClicked, setIsClicked] = useState(false);
-
     const [row, setRow] = useState([card]);
     const [listOfRows, addRow] = useState([row]);
+    const [chartInfo, addInfo] = useState([]);
 
     // UPDATE COLUMNS
     useEffect(() => {
@@ -23,7 +22,6 @@ function Chart(props)
                 setRow(r => [...r, card]);
             }
         }
-        console.log(props.image);
     }, [props.colsNum, row]); // Only add new column of cards if colsNum is changed
 
     // UPDATE ROWS
@@ -37,34 +35,49 @@ function Chart(props)
         }
     }, [props.rowsNum, row]); // Only add new row if rowsNum is changed
 
+    // CLICK ON CHART POSITION
     function handleClick(event) {
-        event.target['src']=props.image;
-    }
-    /*
-    const [styles, api] = useSpring(() => ({
-        border: "1px solid black"
-    }));
+        console.log('props.album : ' + props.album + '\n' + 'chartInfo: ' + chartInfo);
 
-    useEffect(() => {
-        api.start({
-            border: isClicked ? "1px solid black" : "2px solid white"
-        });
-        setIsClicked((prev) => !prev);
-    }, []);
-    */
-    const updatedRow = row.map((r, index)=>{
+        // If there is an image in the selected position, remove it and replace it with the new one
+        if (chartInfo.indexOf(event.target['alt']) > -1) 
+        {
+            console.log("There is already an image there.");
+        }
+
+        // If the image is already in the chart, remove it from its position and place it in the selected position
+        else if (chartInfo.indexOf(props.album) > -1) 
+        {
+            console.log(event);
+            chartInfo[chartInfo.indexOf(props.album)] = "";
+            event.target['src']=props.image;
+            event.target['alt']=props.album;
+            addInfo(cinf => [...cinf, props.album]);       
+        }
+
+        // If there is no image there and the selected image isn't already in the chart then place it and add its details to the chart in the correct ranking
+        else
+        {
+            event.target['src']=props.image;
+            event.target['alt']=props.album;
+            addInfo(cinf => [...cinf, props.album]);
+        }
+
+    }
+
+    const updatedRow = row.map((r, colIndex)=>{
         return(
             <div className='card'>
-                <img key={index} src={row[index].src} alt={row[index].alt} onClick={handleClick}
+                <img key={colIndex} src={row[colIndex].src} alt={row[colIndex].alt} onClick={handleClick}
                     
                 />
             </div>
         );
     });
 
-    const totalRows = listOfRows.map((r, index) => {
+    const totalRows = listOfRows.map((r, rowIndex) => {
         return(
-            <div className='chartRow' key={index}>
+            <div className='chartRow' key={rowIndex}>
                 {updatedRow}
             </div>
         );
@@ -72,7 +85,12 @@ function Chart(props)
 
     return(
         <div id="chartWrapper">
-            {totalRows}
+            <div id='chart'>{totalRows}</div>
+            <div id='chartDetails'>
+                <ul>
+                    {chartInfo.map((d, index) => (<li key={index}>{d}</li>))}
+                </ul>
+            </div>
         </div>
     )
 }

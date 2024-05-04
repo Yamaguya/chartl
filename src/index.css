@@ -50,24 +50,35 @@ body
 
 #chartDetails
 {
+  position: absolute;
+  right: 10%;
+  top: 5%;
   width: 10%;
+  background-color: white;
 }
 
 .chartRow 
 {
   opacity: 0.9;
   background-color: #20262e;
-  display: inline-block;
+  display: block;
 }
 
 .card {
-  padding: 10px;
-  height: 200px;
-  width: 200px;
+  display: inline-block;
+  padding: 15px;
 }
 
-.card img{
-  padding: 10px;
-  max-height: 180px;;
-  max-width: 180px;
+.card img {
+  max-width: 200px;
+  max-height: 200px;
+}
+
+.inactive
+{
+  border: none;
+}
+
+.active {
+  border: 1px dashed white;
 }
