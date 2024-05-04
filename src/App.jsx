@@ -40,11 +40,9 @@ function App() {
 	// Can safely use index as key because the search results are never reordered or filtered  
 	function handleClickImage(event) { 
 		const i = (event.target['alt']);
-		//console.log(albumList[i] + ' ' + artistList[i] + ' ' + coverList[i]);
 		setAlbum(albumList[i]);
 		setArtist(artistList[i]);
 		setImgSrc(coverList[i]);
-		//addAlbum(event.target.)
 	}
 	
 	async function fetchLastFmData() {
@@ -81,7 +79,7 @@ function App() {
 			<div id='sliderWrapper'>
 				<div>
 					<label>Rows:
-						<input id="rowSlider" type="range" min={1} max={10}
+						<input id="slider" type="range" min={1} max={10}
 							value={rowCount}
 							onChange={updateRowCount}
 						/>
@@ -91,7 +89,7 @@ function App() {
 
 				<div>
 					<label>Columns:
-						<input id="colSlider" type="range" min={1} max={10}
+						<input id="slider" type="range" min={1} max={10}
 							value={colCount}
 							onChange={updateColCount}
 						/>

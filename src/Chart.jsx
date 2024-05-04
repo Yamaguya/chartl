@@ -13,7 +13,7 @@ function Chart(props)
     const [listOfRows, addRow] = useState([row]);
     const [chartInfo, addInfo] = useState([]);
 
-    // UPDATE COLUMNS
+    // ---UPDATE COLUMNS---
     useEffect(() => {
         if (props.colsNum < Object.keys(row).length) {
             setRow(row.filter((_, i) => i < props.colsNum));
@@ -24,7 +24,7 @@ function Chart(props)
         }
     }, [props.colsNum, row]); // Only add new column of cards if colsNum is changed
 
-    // UPDATE ROWS
+    // ---UPDATE ROWS---
     useEffect(() => {
         if (props.rowsNum < Object.keys(listOfRows).length) {
             addRow(listOfRows.filter((_, ri) => ri < props.rowsNum));
@@ -35,27 +35,29 @@ function Chart(props)
         }
     }, [props.rowsNum, row]); // Only add new row if rowsNum is changed
 
-    // CLICK ON CHART POSITION
+    // ---PLACE ON CHART---
     function handleClick(event) {
         console.log('props.album : ' + props.album + '\n' + 'chartInfo: ' + chartInfo);
 
-        // If there is an image in the selected position, remove it and replace it with the new one
+        // If there is an image in the selected position, remove it and replace it with
+        // the new one
         if (chartInfo.indexOf(event.target['alt']) > -1) 
         {
             console.log("There is already an image there.");
         }
 
-        // If the image is already in the chart, remove it from its position and place it in the selected position
+        // If the image is already in the chart, remove it from its position and place 
+        // it in the selected position
         else if (chartInfo.indexOf(props.album) > -1) 
         {
-            console.log(event);
-            chartInfo[chartInfo.indexOf(props.album)] = "";
-            event.target['src']=props.image;
-            event.target['alt']=props.album;
-            addInfo(cinf => [...cinf, props.album]);       
+            console.log("The image is already in the chart.");
+            //chartInfo[chartInfo.indexOf(props.album)] = "";
+            //event.target['src']=props.image;
+            //event.target['alt']=props.album;
         }
 
-        // If there is no image there and the selected image isn't already in the chart then place it and add its details to the chart in the correct ranking
+        // If there is no image there and the selected image isn't already in the chart 
+        // then place it and add its details to the chart in the correct ranking
         else
         {
             event.target['src']=props.image;

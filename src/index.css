@@ -16,6 +16,57 @@ body
   display: block;
 }
 
+input
+{
+  font-size: 0.7rem;
+  padding: 2px;
+  border: 1px solid black;
+}
+
+button
+{
+  font-size: 0.7rem;
+  font-weight: lighter;
+  margin: 1px;
+  padding: 2px 5px;
+  color: rgb(12, 16, 27);
+  border: 1px solid black;
+  cursor: pointer;
+  transition: background-color 2.5 ease;
+}
+
+select 
+{
+  font-size: 0.7rem;
+  border: 1px solid black;
+  margin: 1px;
+  padding: 2px 5px;
+}
+
+#sliderWrapper
+{
+  font-size: 0.7rem;
+  padding: 2px 5px;
+  border: 1px solid black;
+}
+
+ul
+{
+  list-style: none;
+}
+
+li
+{
+  font-size: 0.8rem;
+  font-weight: lighter;
+  color:rgb(214, 205, 205);
+}
+
+#slider
+{
+  font-size: 0.8rem;
+}
+
 #searchWrapper
 {
   width: 280px;
@@ -23,6 +74,7 @@ body
 
 #searchResults
 {
+  border: 1px dashed rgba(17, 17, 19, 0.267);
   display: flexbox;
   overflow-y: scroll; 
   max-height: 550px;
@@ -50,11 +102,13 @@ body
 
 #chartDetails
 {
+  display: inline-block;
   position: absolute;
   right: 10%;
   top: 5%;
-  width: 10%;
-  background-color: white;
+  width: 15%;
+  border: 1px solid black;
+  text-align: left;
 }
 
 .chartRow 
