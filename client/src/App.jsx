@@ -4,6 +4,19 @@ import Chart from './Chart.jsx';
 import defaultImg from './assets/default.png'
 
 function App() {
+
+	const [backendData, setBackendData] = useState({});
+
+	useEffect(() => {
+		fetch("http://localhost:5000/api").then(
+			response => response.json()
+		).then(
+			data => {setBackendData(data)}
+		)
+	}, []) // Only runs on the first render of the component
+
+
+
 	const [rowCount, setRowCount] = useState(3);
     const [colCount, setColCount] = useState(3);
 	const [search, submitSearch] = useState("");
@@ -50,7 +63,7 @@ function App() {
 		setArtistList([]);
 		setAlbumList([]);
 
-		const res = await fetch('https://ws.audioscrobbler.com/2.0/?method=album.search&album='+search+'&api_key=c1cdfe36b37e79fa24ca83d862a9dcaf&format=json');
+		const res = await fetch('https://ws.audioscrobbler.com/2.0/?method=album.search&album='+search+'&api_key='+backendData["API_KEY"]+'&format=json');
 		const data = await res.json();
 
 		const albumList = data.results.albummatches.album;
