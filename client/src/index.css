@@ -11,20 +11,12 @@ body
   max-width: 20%;
 }
 
-#sliderWrapper
-{
-  display: block;
-}
-
-input
-{
+#sliderWrapper, input, button, select {
   font-size: 0.7rem;
-  padding: 2px;
+  padding: 2px 5px;
   border: 1px solid black;
 }
-
-button
-{
+button {
   font-size: 0.7rem;
   font-weight: lighter;
   margin: 1px;
@@ -34,20 +26,9 @@ button
   cursor: pointer;
   transition: background-color 2.5 ease;
 }
-
-select 
-{
-  font-size: 0.7rem;
-  border: 1px solid black;
+select {
   margin: 1px;
   padding: 2px 5px;
-}
-
-#sliderWrapper
-{
-  font-size: 0.7rem;
-  padding: 2px 5px;
-  border: 1px solid black;
 }
 
 ul
