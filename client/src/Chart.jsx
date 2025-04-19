@@ -4,93 +4,130 @@ import defaultImg from './assets/default.png'
 function Chart(props) 
 {
     const defaultAlt = 'coverArt'
-    const [card, setCard] = useState({
-        type : 'img',
-        src : defaultImg,
-        alt : defaultAlt
-    });
-    const [row, setRow] = useState([card]);
-    const [listOfRows, addRow] = useState([row]);
-    const [chartInfo, addInfo] = useState([]);
-
-    // ---UPDATE COLUMNS---
+    // Store album positions in a grid-independent data structure
+    // Use a Map with position keys like "0-1" (row 0, col 1)
+    const [albumPositions, setAlbumPositions] = useState(new Map());
+    const [gridMatrix, setGridMatrix] = useState([]);
+    
+    // Update the grid when rows or columns change, but preserve albums
     useEffect(() => {
-        if (props.colsNum < Object.keys(row).length) {
-            setRow(row.filter((_, i) => i < props.colsNum));
-        } else {
-            for (let i = Object.keys(row).length; i < props.colsNum; i++) {
-                setRow(r => [...r, card]);
+        const newGrid = [];
+        
+        // Create the new grid structure
+        for (let i = 0; i < props.rowsNum; i++) {
+            const row = [];
+            for (let j = 0; j < props.colsNum; j++) {
+                const position = `${i}-${j}`;
+                // Check if this position had an album
+                if (albumPositions.has(position)) {
+                    // Use the existing album data
+                    row.push({
+                        ...albumPositions.get(position),
+                        id: position
+                    });
+                } else {
+                    // Create an empty cell
+                    row.push({
+                        type: 'img',
+                        src: defaultImg,
+                        alt: defaultAlt,
+                        id: position
+                    });
+                }
+            }
+            newGrid.push(row);
+        }
+        
+        setGridMatrix(newGrid);
+    }, [props.rowsNum, props.colsNum, albumPositions]);
+    
+    // Get ordered album list for the sidebar
+    const getOrderedAlbumList = () => {
+        const albums = [];
+        
+        // Go through grid from top to bottom, left to right
+        for (let i = 0; i < props.rowsNum; i++) {
+            for (let j = 0; j < props.colsNum; j++) {
+                const position = `${i}-${j}`;
+                
+                if (albumPositions.has(position)) {
+                    const albumData = albumPositions.get(position);
+                    if (albumData.alt !== defaultAlt) {
+                        albums.push({
+                            album: albumData.alt,
+                            artist: albumData.artist,
+                            position: position // Keep track of position for debugging
+                        });
+                    }
+                }
             }
         }
-    }, [props.colsNum, row]); // Only add new column of cards if colsNum is changed
-
-    // ---UPDATE ROWS---
-    useEffect(() => {
-        if (props.rowsNum < Object.keys(listOfRows).length) {
-            addRow(listOfRows.filter((_, ri) => ri < props.rowsNum));
-        } else {
-            for (let i = listOfRows.length; i < props.rowsNum; i++) {
-                addRow(rs => [...rs, row]);
+        
+        return albums;
+    };
+    
+    // Handle click on a chart position
+    function handleClick(rowIndex, colIndex) {
+        if (!props.album) return;
+        
+        const position = `${rowIndex}-${colIndex}`;
+        const newPositions = new Map(albumPositions);
+        
+        // Check if this position already has the same album
+        if (newPositions.has(position) && newPositions.get(position).alt === props.album) {
+            return; // Nothing to do if it's the same album
+        }
+        
+        // Check if the album is already in the chart elsewhere
+        let existingPosition = null;
+        newPositions.forEach((value, key) => {
+            if (value.alt === props.album) {
+                existingPosition = key;
             }
+        });
+        
+        // If it's elsewhere, remove it from that position
+        if (existingPosition) {
+            newPositions.delete(existingPosition);
         }
-    }, [props.rowsNum, row]); // Only add new row if rowsNum is changed
-
-    // ---PLACE ON CHART---
-    function handleClick(event) {
-        console.log('props.album : ' + props.album + '\n' + 'chartInfo: ' + chartInfo);
-
-        // If there is an image in the selected position, remove it and replace it with
-        // the new one
-        if (chartInfo.indexOf(event.target['alt']) > -1) 
-        {
-            console.log("There is already an image there.");
-        }
-
-        // If the image is already in the chart, remove it from its position and place 
-        // it in the selected position
-        else if (chartInfo.indexOf(props.album) > -1) 
-        {
-            console.log("The image is already in the chart.");
-            //chartInfo[chartInfo.indexOf(props.album)] = "";
-            //event.target['src']=props.image;
-            //event.target['alt']=props.album;
-        }
-
-        // If there is no image there and the selected image isn't already in the chart 
-        // then place it and add its details to the chart in the correct ranking
-        else
-        {
-            event.target['src']=props.image;
-            event.target['alt']=props.album;
-            addInfo(cinf => [...cinf, props.album]);
-        }
-
+        
+        // Add album to the clicked position
+        newPositions.set(position, {
+            type: 'img',
+            src: props.image,
+            alt: props.album,
+            artist: props.artist
+        });
+        
+        setAlbumPositions(newPositions);
     }
 
-    const updatedRow = row.map((r, colIndex)=>{
-        return(
-            <div className='card'>
-                <img key={colIndex} src={row[colIndex].src} alt={row[colIndex].alt} onClick={handleClick}
-                    
-                />
-            </div>
-        );
-    });
-
-    const totalRows = listOfRows.map((r, rowIndex) => {
-        return(
-            <div className='chartRow' key={rowIndex}>
-                {updatedRow}
-            </div>
-        );
-    });
+    const orderedAlbums = getOrderedAlbumList();
 
     return(
         <div id="chartWrapper">
-            <div id='chart'>{totalRows}</div>
+            <div id='chart'>
+                {gridMatrix.map((row, rowIndex) => (
+                    <div className='chartRow' key={`row-${rowIndex}`}>
+                        {row.map((cell, colIndex) => (
+                            <div className='card' key={`cell-${rowIndex}-${colIndex}`}>
+                                <img 
+                                    src={cell.src} 
+                                    alt={cell.alt} 
+                                    onClick={() => handleClick(rowIndex, colIndex)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
             <div id='chartDetails'>
                 <ul>
-                    {chartInfo.map((d, index) => (<li key={index}>{d}</li>))}
+                    {orderedAlbums.map((item, index) => (
+                        <li key={`info-${index}`}>
+                            {index + 1}. {item.album} - {item.artist}
+                        </li>
+                    ))}
                 </ul>
             </div>
         </div>

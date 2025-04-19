@@ -4,7 +4,6 @@ import Chart from './Chart.jsx';
 import defaultImg from './assets/default.png'
 
 function App() {
-
 	const [backendData, setBackendData] = useState({});
 
 	useEffect(() => {
@@ -14,8 +13,6 @@ function App() {
 			data => {setBackendData(data)}
 		)
 	}, []) // Only runs on the first render of the component
-
-
 
 	const [rowCount, setRowCount] = useState(3);
     const [colCount, setColCount] = useState(3);
@@ -49,8 +46,7 @@ function App() {
 		submitSearch(event.target.value);
 		fetchLastFmData();
 	}
-
-	// Can safely use index as key because the search results are never reordered or filtered  
+	
 	function handleClickImage(event) { 
 		const i = (event.target['alt']);
 		setAlbum(albumList[i]);
@@ -63,25 +59,35 @@ function App() {
 		setArtistList([]);
 		setAlbumList([]);
 
-		const res = await fetch('https://ws.audioscrobbler.com/2.0/?method=album.search&album='+search+'&api_key='+backendData["API_KEY"]+'&format=json');
-		const data = await res.json();
+		try {
+			const res = await fetch('https://ws.audioscrobbler.com/2.0/?method=album.search&album='+search+'&api_key='+backendData["API_KEY"]+'&format=json');
+			const data = await res.json();
 
-		const albumList = data.results.albummatches.album;
-		albumList.forEach((a) =>
-			setCoverList(alb => [...alb,(a.image[3]['#text'])])
-		);
-		albumList.forEach((a) =>
-			setArtistList(alb => [...alb,(a.artist)])
-		);
-		albumList.forEach((a) =>
-			setAlbumList(alb => [...alb,(a.name)])
-		);
+			if (data.results && data.results.albummatches && data.results.albummatches.album) {
+				const albumList = data.results.albummatches.album;
+				albumList.forEach((a) =>
+					setCoverList(alb => [...alb,(a.image[3]['#text'])])
+				);
+				albumList.forEach((a) =>
+					setArtistList(alb => [...alb,(a.artist)])
+				);
+				albumList.forEach((a) =>
+					setAlbumList(alb => [...alb,(a.name)])
+				);
+			}
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
 	}
 
 	const listOfResults = coverList.map((result, index) => {	
         return(
-			<div className='searchCard'>
-            	<img src={result} key={index} onClick={handleClickImage} alt={index}/>
+			<div className='searchCard' key={`search-result-${index}`}>
+            	<img 
+					src={result} 
+					onClick={handleClickImage} 
+					alt={index}
+				/>
 			</div>
         );
     });
@@ -113,7 +119,7 @@ function App() {
 			<div id="searchWrapper">
                 <select id="selectType">
                     <option value="music">Music</option>
-                    <option value="music">Movies</option>
+                    <option value="movies">Movies</option>
                     <option value="books">Books</option>
                 </select>
                 <input 
